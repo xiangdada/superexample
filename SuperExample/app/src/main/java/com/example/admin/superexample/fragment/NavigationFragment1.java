@@ -1,29 +1,25 @@
 package com.example.admin.superexample.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.admin.superexample.DetailActivity;
 import com.example.admin.superexample.R;
 import com.example.admin.superexample.adapter.NavigationFragmentAdapter1;
-import com.example.admin.superexample.configure.Configure;
-import com.example.admin.superexample.entity.NavigationFragmentData1;
+import com.example.admin.superexample.entity.NavigationFragmentData;
+import com.example.admin.superexample.util.SizeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,89 +32,53 @@ import butterknife.ButterKnife;
  */
 
 public class NavigationFragment1 extends Fragment {
-    @BindView(R.id.listView)
-    ListView mListView;
+    @BindView(R.id.coordinatorLayout)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout mAppBarLayout;
+    @BindView(R.id.collapsingToolbarLayout)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     private Context mContext;
     private NavigationFragmentAdapter1 mAdapter;
 
-    private List<NavigationFragmentData1> list;
+    private int width1;
+    private int height1;
+    private int width2;
+    private int height2;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
+        mAdapter = new NavigationFragmentAdapter1(mContext, null);
 
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View view = inflater.inflate(R.layout.fragment_navigation1, container, false);
-        View view = inflater.inflate(R.layout.fragment_navigation1, null);
+        View view = inflater.inflate(R.layout.fragment_navigation1, container, false);
+        //        View view = inflater.inflate(R.layout.fragment_navigation1, null);
         ButterKnife.bind(this, view);
-        mAdapter = new NavigationFragmentAdapter1(mContext, null,mListView);
-        mAdapter.setOnItemClickListener(new NavigationFragmentAdapter1.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, View clickView, int position, int listViewPosition) {
-                String string = "";
-                TextView textView;
-                switch (position) {
-                    case 0:
-                        if(NavigationFragmentAdapter1.mRecyclerView != null) {
-                            Log.i("测试","HELLO WORLD");
+        mToolbar.setNavigationIcon(R.drawable.ic_drag);
+        mToolbar.setLogo(R.mipmap.ic_launcher);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged(getFlaseDatas());
 
-                        } else {
-                            string = listViewPosition + "  " + mAdapter.getItem(listViewPosition).getContent();
-                            Log.i("测试", string);
-                            startActivity(new Intent(mContext, DetailActivity.class)
-                                    .putExtra("content",string));
-
-                        }
-                        break;
-                    case 1:
-                        textView = (TextView) itemView.findViewById(R.id.tv_function);
-                        string = listViewPosition + "  " + textView.getText().toString();
-                        Log.i("测试", string);
-
-                        NavigationFragmentData1 data = list.get(listViewPosition);
-                        list.remove(listViewPosition);
-                        list.add(0,data);
-                        mAdapter.notifyDataSetChanged(list);
-                        break;
-                    case 2:
-                        textView = (TextView) itemView.findViewById(R.id.tv_function);
-                        string = listViewPosition + "  " + textView.getText().toString();
-                        Log.i("测试", string);
-                        break;
-                    case 3:
-                        textView = (TextView) itemView.findViewById(R.id.tv_function);
-                        string = listViewPosition + "  " + textView.getText().toString();
-                        Log.i("测试", string);
-
-                        list.remove(listViewPosition);
-                        mAdapter.notifyDataSetChanged(list);
-
-                        break;
-                    default:
-                        break;
-                }
-            }
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener(){
 
             @Override
-            public void onItemLongClick(View itemView, View clickView, int position, int listViewPosition) {
-
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                setToolbarAlpha(-verticalOffset);
             }
         });
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("测试", "setOnItemClickListener ");
-            }
-        });
-        list = Configure.getNavigationFragmentData1();
-        mAdapter.notifyDataSetChanged(list);
+
         return view;
     }
 
@@ -126,12 +86,47 @@ public class NavigationFragment1 extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        int w1 = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int h1 = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.EXACTLY);
+        mToolbar.measure(w1, h1);
+        int w2 = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int h2 = View.MeasureSpec.makeMeasureSpec(SizeUtil.dipTopx(mContext, 200), View.MeasureSpec.EXACTLY);
+        mAppBarLayout.measure(w2, h2);
+        width1 = mToolbar.getMeasuredWidth();
+        height1 = mToolbar.getMeasuredHeight();
+        width2 = mAppBarLayout.getMeasuredWidth();
+        height2 = mAppBarLayout.getMeasuredHeight();
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        NavigationFragmentAdapter1.clearOnScrollListeners();
     }
+
+    public void setToolbarAlpha(int y) {
+        ColorDrawable drawable = new ColorDrawable(Color.parseColor("#80000000"));
+        int alpha = y * 255 / (height2 - height1);
+        alpha = (alpha>255?255:alpha);
+
+        drawable.setAlpha(alpha);
+        mToolbar.setBackground(drawable);
+    }
+
+    public List<NavigationFragmentData> getFlaseDatas() {
+        List<NavigationFragmentData> datas = new ArrayList<NavigationFragmentData>();
+        for (int i = 0; i < 10; i++) {
+            NavigationFragmentData data = new NavigationFragmentData();
+            data.setId(i + 1);
+            data.setName("名称" + i);
+            data.setDescription("描述");
+            data.setLearner("1000");
+            data.setPicSmall("");
+            data.setPicBig("");
+            datas.add(data);
+        }
+        return datas;
+    }
+
+
 }

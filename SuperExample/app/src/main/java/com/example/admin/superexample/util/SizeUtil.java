@@ -9,28 +9,34 @@ import android.view.WindowManager;
 
 public class SizeUtil {
 
-    /**
-     * 获取屏幕宽度
-     * @param context
-     * @return
-     */
-    public static int getScreenWidth(Context context) {
-        int width = 0;
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        width = wm.getDefaultDisplay().getWidth();
-        return width;
+    public static int dipTopx(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
     }
 
-    /**
-     * 获取欧醒目高度
-     * @param context
-     * @return
-     */
-    public static int getScreenHeight(Context context) {
-        int height = 0;
+    public static int pxTodip(Context context, float pxValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static int pxTosp(Context context, float pxValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (pxValue / fontScale + 0.5f);
+    }
+
+    public static int spTopx(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    public static int getScreenWidth(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        height = wm.getDefaultDisplay().getHeight();
-        return height;
+        return wm.getDefaultDisplay().getWidth();
+    }
+
+    public static int getScreenHeight(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return wm.getDefaultDisplay().getHeight();
     }
 
 }

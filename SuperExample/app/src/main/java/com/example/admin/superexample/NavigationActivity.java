@@ -11,8 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,6 +26,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class NavigationActivity extends FragmentActivity {
+    public static String URL = "http://www.imooc.com/api/teacher?type=4&num=30";
+
     @BindView(R.id.fragmen_content)
     RelativeLayout mFragmentContent;
     @BindView(R.id.tabLayout)
@@ -45,9 +45,9 @@ public class NavigationActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_navigation);
         ButterKnife.bind(this);
 
@@ -61,12 +61,6 @@ public class NavigationActivity extends FragmentActivity {
         fragments.add(fragment2);
         fragments.add(fragment3);
         showFragment(0);
-//        ft = fm.beginTransaction();
-//        ft.add(R.id.fragmen_content, fragment1);
-//        ft.add(R.id.fragmen_content,fragment2);
-//        ft.add(R.id.fragmen_content,fragment3);
-//        ft.hide(fragment2).hide(fragment3);
-//        ft.commit();
 
 
 //        initTabLayout();
