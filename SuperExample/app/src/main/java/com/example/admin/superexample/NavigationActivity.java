@@ -5,14 +5,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.admin.superexample.fragment.NavigationFragment1;
@@ -25,13 +26,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NavigationActivity extends FragmentActivity {
-    public static String URL = "http://www.imooc.com/api/teacher?type=4&num=30";
+public class NavigationActivity extends BaseActivity {
 
-    @BindView(R.id.fragmen_content)
-    RelativeLayout mFragmentContent;
+    @BindView(R.id.drawerlayout)
+    DrawerLayout drawerlayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.ll_content)
+    LinearLayout ll_content;
     @BindView(R.id.tabLayout)
-    TabLayout mTableLayout;
+    TabLayout tabLayout;
 
     private NavigationFragment1 fragment1;
     private NavigationFragment2 fragment2;
@@ -68,13 +72,13 @@ public class NavigationActivity extends FragmentActivity {
     }
 
     private void initTabLayout() {
-        mTableLayout.addTab(mTableLayout.newTab().setText("消息")
+        tabLayout.addTab(tabLayout.newTab().setText("消息")
                 .setIcon(getResources().getDrawable(R.drawable.tablayout_selector1)));
-        mTableLayout.addTab(mTableLayout.newTab().setText("联系人")
+        tabLayout.addTab(tabLayout.newTab().setText("联系人")
                 .setIcon(getResources().getDrawable(R.drawable.tablayout_selector2)), true);
-        mTableLayout.addTab(mTableLayout.newTab().setText("动态")
+        tabLayout.addTab(tabLayout.newTab().setText("动态")
                 .setIcon(getResources().getDrawable(R.drawable.tablayout_selector3)));
-        mTableLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -91,9 +95,9 @@ public class NavigationActivity extends FragmentActivity {
             }
         });
         // 设置指示器的颜色
-        mTableLayout.setSelectedTabIndicatorColor(Color.parseColor("#ff00ff"));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#ff00ff"));
         // 设置指示器的高度，设置为0则不显示指示器
-        mTableLayout.setSelectedTabIndicatorHeight(0);
+        tabLayout.setSelectedTabIndicatorHeight(0);
 
         /**
          * 设置Tab在未选中和选中状态下的字体颜色,参数必须要传入表示颜色的int值，传入资源文件表示的int怎无效；
@@ -102,12 +106,12 @@ public class NavigationActivity extends FragmentActivity {
          * mTableLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#ff00ff"));传入的也是表示颜色的int值；
          */
 //        mTableLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#ff00ff"));
-        mTableLayout.setTabTextColors(getResources().getColor(android.R.color.darker_gray),
+        tabLayout.setTabTextColors(getResources().getColor(android.R.color.darker_gray),
                 getResources().getColor(android.R.color.holo_blue_bright));
         // 设置整个tabLayout的背景图片
         Drawable drawable = getResources().getDrawable(R.drawable.bg);
         drawable.setAlpha(100);
-        mTableLayout.setBackground(drawable);
+        tabLayout.setBackground(drawable);
         // 当tab比较多的时候可以通过以下的代码来设置TabLayout是可以滑动的
 //        mTableLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
@@ -120,24 +124,25 @@ public class NavigationActivity extends FragmentActivity {
     private void initTabLayoutForCustom() {
         LayoutInflater inflater = LayoutInflater.from(this);
         int[] drawables = new int[]{R.drawable.tablayout_selector1, R.drawable.tablayout_selector2, R.drawable.tablayout_selector3};
-        final String[] texts = new String[]{"消息", "联系人", "动态"};
+        final String[] texts = new String[]{"首页", "功能", "我的"};
 
         for (int i = 0; i < 3; i++) {
-            TabLayout.Tab tab = mTableLayout.newTab();
+            TabLayout.Tab tab = tabLayout.newTab();
             View view = inflater.inflate(R.layout.item_tablayout, null);
             ImageView imageView = (ImageView) view.findViewById(R.id.tablayout_imageview);
             TextView textView = (TextView) view.findViewById(R.id.tablayout_textview);
-            imageView.setBackground(getResources().getDrawable(drawables[i]));
+            imageView.setBackgroundResource(drawables[i]);
             textView.setText(texts[i]);
             textView.setTextColor(getResources().getColorStateList(R.color.tablayout_color_selector));
+            textView.setTextSize(13);
             tab.setCustomView(view);
             if (i == 0) {
-                mTableLayout.addTab(tab, true);
+                tabLayout.addTab(tab, true);
             } else {
-                mTableLayout.addTab(tab);
+                tabLayout.addTab(tab);
             }
         }
-        mTableLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()) {
@@ -167,8 +172,8 @@ public class NavigationActivity extends FragmentActivity {
 
             }
         });
-        mTableLayout.setSelectedTabIndicatorColor(Color.parseColor("#ff00ff"));
-        mTableLayout.setSelectedTabIndicatorHeight(0);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#ff00ff"));
+        tabLayout.setSelectedTabIndicatorHeight(0);
 
     }
 
@@ -186,7 +191,7 @@ public class NavigationActivity extends FragmentActivity {
             mCurrentFragment = fragment;
             mCurrentTabPosition = position;
             if (!fragment.isAdded()) {
-                ft.add(R.id.fragmen_content, fragment, fragment.getClass().getName());
+                ft.add(R.id.ll_content, fragment, fragment.getClass().getName());
             } else {
                 ft.show(fragment);
             }

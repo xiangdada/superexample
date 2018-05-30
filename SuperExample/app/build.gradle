@@ -30,4 +30,10 @@ dependencies {
     compile 'com.android.support:design:25.2.0'
     compile 'com.jakewharton:butterknife:8.5.1'
     apt 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/IndoorscapeAlbumPlugin.jar')
+    // https://github.com/youth5201314/banner
+    compile 'com.youth.banner:banner:1.4.10'
+    // https://github.com/XRecyclerView/XRecyclerView
+    compile 'com.jcodecraeer:xrecyclerview:1.5.9'
 }
